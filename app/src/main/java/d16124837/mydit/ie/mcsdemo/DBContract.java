@@ -3,7 +3,6 @@ package d16124837.mydit.ie.mcsdemo;
 import android.provider.BaseColumns;
 
 /**
- * Created by James on 21-Nov-16.
  * This class represents the database schema and is the single point at which it is represented.
  */
 
