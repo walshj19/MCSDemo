@@ -6,14 +6,14 @@ package d16124837.mydit.ie.mcsdemo;
  * This class represents all of the information for one image and it's analysis.
  */
 
-public class ImageData {
+class ImageData {
     private String path;
 
-    public String getPath() {
+    String getPath() {
         return path;
     }
 
-    public void setPath(String path) {
+    void setPath(String path) {
         this.path = path;
     }
 }
