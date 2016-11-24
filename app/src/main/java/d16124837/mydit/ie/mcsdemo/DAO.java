@@ -2,6 +2,7 @@ package d16124837.mydit.ie.mcsdemo;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
@@ -26,6 +27,47 @@ class DAO {
         values.put(DBContract.Image.COLUMN_NAME_PATH, image.getPath());
 
         db.insert(DBContract.Image.TABLE_NAME, null, values);
+    }
+
+    /**
+     * Gets all of the images in the database.
+     */
+    static ImageData[] get(Context context){
+        //get an instance of the database helper for the current context
+        DBHelper dbHelper = new DBHelper(context);
+        //get a read only database to query
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        ImageData[] images;
+
+        //make the query for all rows in the table
+        Cursor result = db.query(true, DBContract.Image.TABLE_NAME, null, null, null, null, null, null, null);
+
+        //return an empty array if there are no results
+        if (!result.moveToFirst()){
+            images = null;
+        }else{
+            //otherwise unpack the data into the array
+            //initialize array with correct number of elements
+            images = new ImageData[result.getCount()];
+            for (ImageData image : images) {
+                result.moveToNext();
+                //add the imageData to the array
+                image = cursorToImageData(result);
+            }
+        }
+
+        return images;
+    }
+
+    /**
+     * unpack one cursor result row into an ImageData object.
+     */
+    private static ImageData cursorToImageData(Cursor cursor){
+        ImageData image = new ImageData();
+
+        image.setPath(cursor.getString(cursor.getColumnIndex(DBContract.Image.COLUMN_NAME_PATH)));
+
+        return image;
     }
 
     /**

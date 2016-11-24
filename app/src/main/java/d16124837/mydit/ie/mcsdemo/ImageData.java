@@ -9,6 +9,12 @@ package d16124837.mydit.ie.mcsdemo;
 class ImageData {
     private String path;
 
+    ImageData(){}
+
+    ImageData(String path){
+        this.path = path;
+    }
+
     String getPath() {
         return path;
     }
