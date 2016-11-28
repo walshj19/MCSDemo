@@ -44,15 +44,16 @@ class DAO {
 
         //return an empty array if there are no results
         if (!result.moveToFirst()){
-            images = null;
+            images = new ImageData[0];
         }else{
             //otherwise unpack the data into the array
             //initialize array with correct number of elements
             images = new ImageData[result.getCount()];
-            for (ImageData image : images) {
-                result.moveToNext();
+            for (int i = 0; i < images.length; i++) {
+
                 //add the imageData to the array
-                image = cursorToImageData(result);
+                images[i] = cursorToImageData(result);
+                result.moveToNext();
             }
         }
 

@@ -8,6 +8,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.view.View;
+import android.widget.ArrayAdapter;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class ImageListActivity extends ListActivity {
         //get the image data from the database
         images = DAO.get(this);
 
-
+        setListAdapter(new ArrayAdapter<>(this, R.layout.row_image_list, R.id.path, images));
     }
 
     /**
