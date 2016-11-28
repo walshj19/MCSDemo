@@ -50,7 +50,6 @@ class DAO {
             //initialize array with correct number of elements
             images = new ImageData[result.getCount()];
             for (int i = 0; i < images.length; i++) {
-
                 //add the imageData to the array
                 images[i] = cursorToImageData(result);
                 result.moveToNext();
@@ -58,6 +57,33 @@ class DAO {
         }
 
         return images;
+    }
+
+    /**
+     * Get one row from the database by an image path
+     */
+    static ImageData get(Context context, String imagePath){
+        DBHelper dbHelper = new DBHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        ImageData image;
+
+        Cursor cursor = db.query(
+                DBContract.Image.TABLE_NAME,
+                null,
+                DBContract.Image.COLUMN_NAME_PATH+" like ?",
+                new String[]{imagePath},
+                null,
+                null,
+                null,
+                null);
+
+        if (!cursor.moveToFirst()){
+            image = null;
+        }else {
+            image = cursorToImageData(cursor);
+        }
+
+        return image;
     }
 
     /**
@@ -109,7 +135,6 @@ class DAO {
         static class Image implements BaseColumns {
             static final String TABLE_NAME = "IMAGE";
             static final String COLUMN_NAME_PATH = "IMAGE";
-            static final String COLUMN_NAME_ = "IMAGE";
         }
     }
 }

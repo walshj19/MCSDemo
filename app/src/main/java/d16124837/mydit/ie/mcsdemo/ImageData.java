@@ -7,6 +7,8 @@ package d16124837.mydit.ie.mcsdemo;
  */
 
 class ImageData {
+    final static String PATH_KEY = "IMAGE_PATH";
+
     private String path;
 
     ImageData(){}

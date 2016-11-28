@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +33,19 @@ public class ImageListActivity extends ListActivity {
         setListAdapter(new ArrayAdapter<>(this, R.layout.row_image_list, R.id.path, images));
     }
 
+    @Override
+    /**
+     * When a list item is clicked it opens up an activity for that item.
+     */
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+
+        //start image activity
+        Intent intent = new Intent(this, ImageActivity.class);
+        intent.putExtra(ImageData.PATH_KEY,images[position].getPath());
+        startActivity(intent);
+    }
+
     /**
      * setup the event listeners
      */
@@ -45,7 +59,7 @@ public class ImageListActivity extends ListActivity {
                 // Create the file and get the image
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 // Create the File where the photo should go
-                File photoFile = null;
+                File photoFile;
                 // Ensure that there's a camera activity to handle the intent
                 if (takePictureIntent.resolveActivity(getPackageManager()) == null) {
                     return;
