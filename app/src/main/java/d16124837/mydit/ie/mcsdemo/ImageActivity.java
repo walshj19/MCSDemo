@@ -66,10 +66,13 @@ public class ImageActivity extends AppCompatActivity {
         imageBitmap = BitmapFactory.decodeFile(image.getPath());
         imageView.setImageBitmap(imageBitmap);
         pathView.setText(image.getPath());
-        tagsView.setText(image.getTags().get(0));
-        descriptionView.setText(image.getDescription().get(0));
-        captionView.setText(image.getCaption());
-        colorsView.setText(image.getColors().get(0));
+        String caption = image.getCaption();
+        if(caption != null && !caption.equals("")) {
+            tagsView.setText(image.getTags().get(0));
+            descriptionView.setText(image.getDescription().get(0));
+            captionView.setText(image.getCaption());
+            colorsView.setText(image.getColors().get(0));
+        }
     }
 
     private void setupListeners(){
@@ -130,12 +133,14 @@ public class ImageActivity extends AppCompatActivity {
             image.setCaption(result.description.captions.get(0).text);
             ArrayList<String> colors = new ArrayList<>();
             for (String color: result.color.dominantColors){
-                tags.add(color);
+                colors.add(color);
             }
             image.setColors(colors);
 
             //update row in database
             DAO.update(getApplicationContext(), image);
+
+            populateViews();
         }
     }
 }

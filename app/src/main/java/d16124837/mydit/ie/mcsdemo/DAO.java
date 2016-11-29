@@ -81,8 +81,8 @@ class DAO {
         Cursor cursor = db.query(
                 DBContract.Image.TABLE_NAME,
                 null,
-                DBContract.Image.COLUMN_NAME_PATH+" like "+imagePath,
-                null,
+                DBContract.Image.COLUMN_NAME_PATH+" like ?",
+                new String[]{imagePath},
                 null,
                 null,
                 null);
@@ -110,7 +110,11 @@ class DAO {
         values.put(DBContract.Image.COLUMN_NAME_CAPTION, image.getCaption());
         values.put(DBContract.Image.COLUMN_NAME_COLORS, arrayListToString(image.getColors()));
 
-        db.update(DBContract.Image.TABLE_NAME,values,DBContract.Image.COLUMN_NAME_PATH+" like "+image.getPath(),null);
+        db.update(
+                DBContract.Image.TABLE_NAME,
+                values,
+                DBContract.Image.COLUMN_NAME_PATH+" like ?",
+                new String[]{image.getPath()});
     }
 
     /**
