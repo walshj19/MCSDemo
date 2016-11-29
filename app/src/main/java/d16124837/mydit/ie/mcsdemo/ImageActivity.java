@@ -4,11 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.util.AsyncListUtil;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,15 +15,21 @@ import com.google.gson.Gson;
 import com.microsoft.projectoxford.vision.VisionServiceClient;
 import com.microsoft.projectoxford.vision.VisionServiceRestClient;
 import com.microsoft.projectoxford.vision.contract.AnalysisResult;
+import com.microsoft.projectoxford.vision.contract.Tag;
 import com.microsoft.projectoxford.vision.rest.VisionServiceException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ImageActivity extends AppCompatActivity {
     private ImageView imageView;
     private TextView pathView;
+    private TextView tagsView;
+    private TextView descriptionView;
+    private TextView captionView;
+    private TextView colorsView;
     private Button analyseButton;
     private ImageData image;
     private Bitmap imageBitmap;
@@ -40,6 +42,10 @@ public class ImageActivity extends AppCompatActivity {
         //get references to the necessary views
         imageView = (ImageView)findViewById(R.id.image);
         pathView = (TextView)findViewById(R.id.path);
+        tagsView = (TextView)findViewById(R.id.tags);
+        descriptionView = (TextView)findViewById(R.id.description);
+        captionView = (TextView)findViewById(R.id.caption);
+        colorsView = (TextView)findViewById(R.id.colors);
         analyseButton = (Button)findViewById(R.id.button_analyse);
 
         //query the database for the imagedata
@@ -59,8 +65,11 @@ public class ImageActivity extends AppCompatActivity {
     private void populateViews(){
         imageBitmap = BitmapFactory.decodeFile(image.getPath());
         imageView.setImageBitmap(imageBitmap);
-
         pathView.setText(image.getPath());
+        tagsView.setText(image.getTags().get(0));
+        descriptionView.setText(image.getDescription().get(0));
+        captionView.setText(image.getCaption());
+        colorsView.setText(image.getColors().get(0));
     }
 
     private void setupListeners(){
@@ -99,6 +108,34 @@ public class ImageActivity extends AppCompatActivity {
             Log.d("MCSDemo",result);
 
             return result;
+        }
+
+        @Override
+        protected void onPostExecute(String data){
+            super.onPostExecute(data);
+
+            Gson gson = new Gson();
+            AnalysisResult result = gson.fromJson(data, AnalysisResult.class);
+
+            ArrayList<String> tags = new ArrayList<>();
+            for (Tag tag: result.tags){
+                tags.add(tag.name);
+            }
+            image.setTags(tags);
+            ArrayList<String> descriptions = new ArrayList<>();
+            for (String description: result.description.tags){
+                descriptions.add(description);
+            }
+            image.setDescription(descriptions);
+            image.setCaption(result.description.captions.get(0).text);
+            ArrayList<String> colors = new ArrayList<>();
+            for (String color: result.color.dominantColors){
+                tags.add(color);
+            }
+            image.setColors(colors);
+
+            //update row in database
+            DAO.update(getApplicationContext(), image);
         }
     }
 }

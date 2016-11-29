@@ -6,6 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by james on 21/11/2016.
@@ -13,7 +18,6 @@ import android.provider.BaseColumns;
  */
 
 // TODO: The database open and close operations are blocking
-// TODO: Finish defining database table
 class DAO {
     /**
      * Inserts one image into the database
@@ -25,6 +29,17 @@ class DAO {
 
         ContentValues values = new ContentValues();
         values.put(DBContract.Image.COLUMN_NAME_PATH, image.getPath());
+        if (image.getTags() != null) {
+            values.put(DBContract.Image.COLUMN_NAME_TAGS, arrayListToString(image.getTags()));
+            values.put(DBContract.Image.COLUMN_NAME_DESCRIPTION, arrayListToString(image.getDescription()));
+            values.put(DBContract.Image.COLUMN_NAME_CAPTION, image.getCaption());
+            values.put(DBContract.Image.COLUMN_NAME_COLORS, arrayListToString(image.getColors()));
+        }else{
+            values.put(DBContract.Image.COLUMN_NAME_TAGS, "");
+            values.put(DBContract.Image.COLUMN_NAME_DESCRIPTION, "");
+            values.put(DBContract.Image.COLUMN_NAME_CAPTION, "");
+            values.put(DBContract.Image.COLUMN_NAME_COLORS, "");
+        }
 
         db.insert(DBContract.Image.TABLE_NAME, null, values);
     }
@@ -32,26 +47,22 @@ class DAO {
     /**
      * Gets all of the images in the database.
      */
-    static ImageData[] get(Context context){
+    static ArrayList<ImageData> get(Context context){
         //get an instance of the database helper for the current context
         DBHelper dbHelper = new DBHelper(context);
         //get a read only database to query
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        ImageData[] images;
+        ArrayList<ImageData> images = new ArrayList<>();
 
         //make the query for all rows in the table
         Cursor result = db.query(true, DBContract.Image.TABLE_NAME, null, null, null, null, null, null, null);
 
         //return an empty array if there are no results
-        if (!result.moveToFirst()){
-            images = new ImageData[0];
-        }else{
+        if (result.moveToFirst()){
             //otherwise unpack the data into the array
-            //initialize array with correct number of elements
-            images = new ImageData[result.getCount()];
-            for (int i = 0; i < images.length; i++) {
+            for (int i = 0; i < images.size(); i++) {
                 //add the imageData to the array
-                images[i] = cursorToImageData(result);
+                images.add(cursorToImageData(result));
                 result.moveToNext();
             }
         }
@@ -70,8 +81,7 @@ class DAO {
         Cursor cursor = db.query(
                 DBContract.Image.TABLE_NAME,
                 null,
-                DBContract.Image.COLUMN_NAME_PATH+" like ?",
-                new String[]{imagePath},
+                DBContract.Image.COLUMN_NAME_PATH+" like "+imagePath,
                 null,
                 null,
                 null,
@@ -87,14 +97,51 @@ class DAO {
     }
 
     /**
+     * Update an entry in the database indexed by it's path
+     */
+    static void update(Context context, ImageData image){
+        DBHelper dbHelper = new DBHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(DBContract.Image.COLUMN_NAME_PATH, image.getPath());
+        values.put(DBContract.Image.COLUMN_NAME_TAGS, arrayListToString(image.getTags()));
+        values.put(DBContract.Image.COLUMN_NAME_DESCRIPTION, arrayListToString(image.getDescription()));
+        values.put(DBContract.Image.COLUMN_NAME_CAPTION, image.getCaption());
+        values.put(DBContract.Image.COLUMN_NAME_COLORS, arrayListToString(image.getColors()));
+
+        db.update(DBContract.Image.TABLE_NAME,values,DBContract.Image.COLUMN_NAME_PATH+" like "+image.getPath(),null);
+    }
+
+    /**
      * unpack one cursor result row into an ImageData object.
      */
     private static ImageData cursorToImageData(Cursor cursor){
         ImageData image = new ImageData();
 
         image.setPath(cursor.getString(cursor.getColumnIndex(DBContract.Image.COLUMN_NAME_PATH)));
-
+        String tags = cursor.getString(cursor.getColumnIndex(DBContract.Image.COLUMN_NAME_TAGS));
+        if(tags != null && !tags.equals("")) {
+            image.setTags(stringToArrayList(tags));
+            image.setDescription(stringToArrayList(cursor.getString(cursor.getColumnIndex(DBContract.Image.COLUMN_NAME_DESCRIPTION))));
+            image.setCaption(cursor.getString(cursor.getColumnIndex(DBContract.Image.COLUMN_NAME_CAPTION)));
+            image.setColors(stringToArrayList(cursor.getString(cursor.getColumnIndex(DBContract.Image.COLUMN_NAME_COLORS))));
+        }
         return image;
+    }
+
+    /**
+     * parse a comma separated list into an arraylist of strings
+     */
+    private static ArrayList<String> stringToArrayList(String str){
+        return new ArrayList<>(Arrays.asList(TextUtils.split(str,",")));
+    }
+
+    /**
+     * generate a comma separated string from an arraylist of strings
+     */
+    private static String arrayListToString(ArrayList<String> array){
+        return TextUtils.join(",",array);
     }
 
     /**
@@ -113,9 +160,14 @@ class DAO {
         public void onCreate(SQLiteDatabase db) {
             String create_table = "CREATE TABLE "+
                     DBContract.Image.TABLE_NAME+" ("+
-                    DBContract.Image._ID+" INTEGER PRIMARY KEY,"+
-                    DBContract.Image.COLUMN_NAME_PATH+" TEXT )";
+                    DBContract.Image._ID+" INTEGER PRIMARY KEY, "+
+                    DBContract.Image.COLUMN_NAME_PATH+" TEXT, "+
+                    DBContract.Image.COLUMN_NAME_TAGS+" TEXT, "+
+                    DBContract.Image.COLUMN_NAME_DESCRIPTION+" TEXT, "+
+                    DBContract.Image.COLUMN_NAME_CAPTION+" TEXT, "+
+                    DBContract.Image.COLUMN_NAME_COLORS+" TEXT);";
 
+            Log.d("MCSDemo", create_table);
             db.execSQL(create_table);
         }
 
@@ -134,7 +186,11 @@ class DAO {
         // this inner class represents the schema information for a column in the database
         static class Image implements BaseColumns {
             static final String TABLE_NAME = "IMAGE";
-            static final String COLUMN_NAME_PATH = "IMAGE";
+            static final String COLUMN_NAME_PATH = "PATH";
+            static final String COLUMN_NAME_TAGS = "TAGS";
+            static final String COLUMN_NAME_DESCRIPTION = "DESCRIPTION";
+            static final String COLUMN_NAME_CAPTION = "CAPTION";
+            static final String COLUMN_NAME_COLORS = "COLORS";
         }
     }
 }

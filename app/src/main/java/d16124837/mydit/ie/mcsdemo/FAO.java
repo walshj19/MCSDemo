@@ -5,6 +5,7 @@ import android.os.Environment;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -20,7 +21,8 @@ class FAO {
      */
     static File createImageFile(Context context) throws IOException {
         // Create an image file name using the local date format
-        String timeStamp = DateFormat.getDateInstance().format(new Date());
+        Date now = new Date();
+        String timeStamp = new SimpleDateFormat("yyyy-MM-dd").format(now);
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(

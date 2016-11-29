@@ -9,14 +9,19 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ImageListActivity extends ListActivity {
+    final static int CAMERA_REQUEST_CODE = 1;
     FloatingActionButton addButton;
-    ImageData[] images;
+    ArrayList<ImageData> images;
+    File lastPhotoFile = null;  //photo file for the last called camera intent
+    ArrayAdapter<ImageData> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +35,9 @@ public class ImageListActivity extends ListActivity {
         //get the image data from the database
         images = DAO.get(this);
 
-        setListAdapter(new ArrayAdapter<>(this, R.layout.row_image_list, R.id.path, images));
+        //setup the list adapter
+        adapter = new ArrayAdapter<ImageData>(this,R.layout.row_image_list,R.id.path,images);
+        setListAdapter(adapter);
     }
 
     @Override
@@ -42,7 +49,7 @@ public class ImageListActivity extends ListActivity {
 
         //start image activity
         Intent intent = new Intent(this, ImageActivity.class);
-        intent.putExtra(ImageData.PATH_KEY,images[position].getPath());
+        intent.putExtra(ImageData.PATH_KEY,images.get(position).getPath());
         startActivity(intent);
     }
 
@@ -58,14 +65,10 @@ public class ImageListActivity extends ListActivity {
             public void onClick(View v) {
                 // Create the file and get the image
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                // Create the File where the photo should go
-                File photoFile;
                 // Ensure that there's a camera activity to handle the intent
-                if (takePictureIntent.resolveActivity(getPackageManager()) == null) {
-                    return;
-                }else{
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                     try {
-                        photoFile = FAO.createImageFile(getApplicationContext());
+                        lastPhotoFile = FAO.createImageFile(getApplicationContext());
                     } catch (IOException ex) {
                         // Error occurred while creating the File
                         return;
@@ -73,13 +76,40 @@ public class ImageListActivity extends ListActivity {
                     // Continue only if the File was successfully created
                     Uri photoURI = FileProvider.getUriForFile(getApplicationContext(),
                             "d16124837.mydit.ie.mcsdemo.fileprovider",
-                            photoFile);
+                            lastPhotoFile);
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                    startActivityForResult(takePictureIntent, 1);
+                    startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
                 }
-                // Add the image to the database
-                DAO.insert(getApplicationContext(), new ImageData(photoFile.getPath()));
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //check result code
+        if (resultCode != RESULT_OK){
+            return;
+        }
+        // switch based on what activity is being returned from
+        switch (requestCode){
+            case CAMERA_REQUEST_CODE:
+                String imagePath = lastPhotoFile.getPath();
+
+                // Add the image to the database
+                DAO.insert(getApplicationContext(), new ImageData(imagePath));
+
+                // Refresh the list of images
+                adapter.add(new ImageData(imagePath));
+
+                // Start the image activity for the new image
+                Intent intent = new Intent(this, ImageActivity.class);
+                intent.putExtra(ImageData.PATH_KEY,imagePath);
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
     }
 }
