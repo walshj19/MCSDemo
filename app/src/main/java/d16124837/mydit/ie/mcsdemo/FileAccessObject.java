@@ -14,7 +14,7 @@ import java.util.Date;
  */
 
 // TODO: check for external storage and only use internal if it's not available
-class FAO {
+class FileAccessObject {
     /**
      * Create an image file which the camera app can store an image in.
      * Taken from the android developers guide.

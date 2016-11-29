@@ -5,7 +5,7 @@ package d16124837.mydit.ie.mcsdemo;
  */
 
 public class DAOTest {
-	DAO dao = new DAO();
+	DatabaseAccessObject databaseAccessObject = new DatabaseAccessObject();
 
 
 }

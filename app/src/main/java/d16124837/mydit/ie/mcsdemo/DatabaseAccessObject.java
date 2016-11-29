@@ -18,7 +18,8 @@ import java.util.Arrays;
  */
 
 // TODO: The database open and close operations are blocking
-class DAO {
+// TODO: Finish defining database table
+class DatabaseAccessObject {
     /**
      * Inserts one image into the database
      * @param image this is the data for the image to be added to the database.

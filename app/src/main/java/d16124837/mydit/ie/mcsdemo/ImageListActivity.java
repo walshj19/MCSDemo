@@ -9,7 +9,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import java.io.File;
@@ -33,7 +32,7 @@ public class ImageListActivity extends ListActivity {
         //populate the list of images
 
         //get the image data from the database
-        images = DAO.get(this);
+        images = DatabaseAccessObject.get(this);
 
         //setup the list adapter
         adapter = new ArrayAdapter<ImageData>(this,R.layout.row_image_list,R.id.path,images);
@@ -68,7 +67,7 @@ public class ImageListActivity extends ListActivity {
                 // Ensure that there's a camera activity to handle the intent
                 if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                     try {
-                        lastPhotoFile = FAO.createImageFile(getApplicationContext());
+                        lastPhotoFile = FileAccessObject.createImageFile(getApplicationContext());
                     } catch (IOException ex) {
                         // Error occurred while creating the File
                         return;
@@ -93,19 +92,19 @@ public class ImageListActivity extends ListActivity {
             return;
         }
         // switch based on what activity is being returned from
-        switch (requestCode){
+        switch (requestCode) {
             case CAMERA_REQUEST_CODE:
                 String imagePath = lastPhotoFile.getPath();
 
                 // Add the image to the database
-                DAO.insert(getApplicationContext(), new ImageData(imagePath));
+                DatabaseAccessObject.insert(getApplicationContext(), new ImageData(imagePath));
 
                 // Refresh the list of images
                 adapter.add(new ImageData(imagePath));
 
                 // Start the image activity for the new image
                 Intent intent = new Intent(this, ImageActivity.class);
-                intent.putExtra(ImageData.PATH_KEY,imagePath);
+                intent.putExtra(ImageData.PATH_KEY, imagePath);
                 startActivity(intent);
                 break;
             default:
