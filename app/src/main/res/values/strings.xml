@@ -4,4 +4,5 @@
     <string name="oxford_subscription_key">e6108d3ddea246568dbe9526a71d81ac</string>
     <string name="title_activity_image">ImageActivity</string>
     <string name="analyse_image">Analyse Image</string>
+    <string name="image_content_description">The image which is being analysed</string>
 </resources>

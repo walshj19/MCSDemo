@@ -3,72 +3,72 @@ package d16124837.mydit.ie.mcsdemo;
 import java.util.ArrayList;
 
 /**
- * Created by James on 23-Nov-16.
- *
  * This class represents all of the information for one image and it's analysis.
+ * @author James
+ * @version 1.0
+ * @since 23/11/16
  */
 
 class ImageData {
-    //definitions
-    final static String PATH_KEY = "IMAGE_PATH";
-    //variables
-    private String path;
-    private ArrayList<String> tags;
-    private ArrayList<String> description;
-    private String caption;
-    private ArrayList<String> colors;
+	final static String PATH_KEY = "IMAGE_PATH";
 
-    ImageData(){}
+	private String path;
+	private ArrayList<String> tags;
+	private ArrayList<String> description;
+	private String caption;
+	private ArrayList<String> colors;
 
-    ImageData(String path){
-        this.path = path;
-    }
+	ImageData(){}
 
-    ImageData(String path, ArrayList<String> tags, ArrayList<String> description, String caption, ArrayList<String> colors){
-        setPath(path);
-        setTags(tags);
-        setDescription(description);
-        setCaption(caption);
-        setColors(colors);
-    }
+	ImageData(String path){
+		this.path = path;
+	}
 
-    String getPath() {
-        return path;
-    }
+	ImageData(String path, ArrayList<String> tags, ArrayList<String> description, String caption, ArrayList<String> colors){
+		setPath(path);
+		setTags(tags);
+		setDescription(description);
+		setCaption(caption);
+		setColors(colors);
+	}
 
-    void setPath(String path) {
-        this.path = path;
-    }
+	String getPath() {
+		return path;
+	}
 
-    ArrayList<String> getTags() {
-        return tags;
-    }
+	void setPath(String path) {
+		this.path = path;
+	}
 
-    void setTags(ArrayList<String> tags) {
-        this.tags = tags;
-    }
+	ArrayList<String> getTags() {
+		return tags;
+	}
 
-    ArrayList<String> getDescription() {
-        return description;
-    }
+	void setTags(ArrayList<String> tags) {
+		this.tags = tags;
+	}
 
-    void setDescription(ArrayList<String> description) {
-        this.description = description;
-    }
+	ArrayList<String> getDescription() {
+		return description;
+	}
 
-    String getCaption() {
-        return caption;
-    }
+	void setDescription(ArrayList<String> description) {
+		this.description = description;
+	}
 
-    void setCaption(String caption) {
-        this.caption = caption;
-    }
+	String getCaption() {
+		return caption;
+	}
 
-    ArrayList<String> getColors() {
-        return colors;
-    }
+	void setCaption(String caption) {
+		this.caption = caption;
+	}
 
-    void setColors(ArrayList<String> colors) {
-        this.colors = colors;
-    }
+	ArrayList<String> getColors() {
+		return colors;
+	}
+
+	void setColors(ArrayList<String> colors) {
+		this.colors = colors;
+	}
 }
