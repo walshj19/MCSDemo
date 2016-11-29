@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Created by james on 21/11/2016.
  * This class is a wrapper for the android sql lite database on the device.
+ * @author James
+ * @since 19/11/16
  */
 
-// TODO: The database open and close operations are blocking
 class DAO {
     /**
      * Inserts one image into the database
@@ -28,7 +28,7 @@ class DAO {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(DBContract.Image.COLUMN_NAME_PATH, image.getPath());
+        values.put(DBContract.Image.COLUMN_NAME_PATH, image.getPath(context));
         if (image.getTags() != null) {
             values.put(DBContract.Image.COLUMN_NAME_TAGS, arrayListToString(image.getTags()));
             values.put(DBContract.Image.COLUMN_NAME_DESCRIPTION, arrayListToString(image.getDescription()));
@@ -42,6 +42,7 @@ class DAO {
         }
 
         db.insert(DBContract.Image.TABLE_NAME, null, values);
+	    db.close();
     }
 
     /**
@@ -55,18 +56,26 @@ class DAO {
         ArrayList<ImageData> images = new ArrayList<>();
 
         //make the query for all rows in the table
-        Cursor result = db.query(true, DBContract.Image.TABLE_NAME, null, null, null, null, null, null, null);
+        Cursor cursor = db.query(true, DBContract.Image.TABLE_NAME, null, null, null, null, null, null, null);
 
         //return an empty array if there are no results
-        if (result.moveToFirst()){
-            //otherwise unpack the data into the array
-            for (int i = 0; i < images.size(); i++) {
-                //add the imageData to the array
-                images.add(cursorToImageData(result));
-                result.moveToNext();
-            }
-        }
+	    try {
+		    if (cursor.moveToFirst()) {
+			    //otherwise unpack the data into the array
+			    for (int i = 0; i < images.size(); i++) {
+				    //add the imageData to the array
+				    images.add(cursorToImageData(cursor));
+				    cursor.moveToNext();
+			    }
+		    }
+	    }finally {
+		    if (cursor != null && !cursor.isClosed()){
+			    cursor.close();
+		    }
+	    }
+	    db.close();
 
+	    Log.d("MCSDemo","Retrieved "+images.size()+" items from the database");
         return images;
     }
 
@@ -87,11 +96,18 @@ class DAO {
                 null,
                 null);
 
-        if (!cursor.moveToFirst()){
-            image = null;
-        }else {
-            image = cursorToImageData(cursor);
-        }
+	    try {
+		    if (!cursor.moveToFirst()) {
+			    image = null;
+		    } else {
+			    image = cursorToImageData(cursor);
+		    }
+	    }finally {
+		    if (cursor != null && !cursor.isClosed()){
+			    cursor.close();
+		    }
+	    }
+	    db.close();
 
         return image;
     }
@@ -104,7 +120,7 @@ class DAO {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(DBContract.Image.COLUMN_NAME_PATH, image.getPath());
+        values.put(DBContract.Image.COLUMN_NAME_PATH, image.getFilename());
         values.put(DBContract.Image.COLUMN_NAME_TAGS, arrayListToString(image.getTags()));
         values.put(DBContract.Image.COLUMN_NAME_DESCRIPTION, arrayListToString(image.getDescription()));
         values.put(DBContract.Image.COLUMN_NAME_CAPTION, image.getCaption());
@@ -114,8 +130,25 @@ class DAO {
                 DBContract.Image.TABLE_NAME,
                 values,
                 DBContract.Image.COLUMN_NAME_PATH+" like ?",
-                new String[]{image.getPath()});
+                new String[]{image.getFilename()});
+	    db.close();
     }
+
+	/**
+	 * Remove an entry from the database
+	 * @param context the calling context
+	 * @param image the item to be removed
+	 */
+	static void delete(Context context, ImageData image){
+		DBHelper dbHelper = new DBHelper(context);
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+		db.delete(
+				DBContract.Image.TABLE_NAME,
+				DBContract.Image.COLUMN_NAME_PATH+" like ?",
+				new String[]{image.getFilename()});
+		db.close();
+	}
 
     /**
      * unpack one cursor result row into an ImageData object.
@@ -123,7 +156,7 @@ class DAO {
     private static ImageData cursorToImageData(Cursor cursor){
         ImageData image = new ImageData();
 
-        image.setPath(cursor.getString(cursor.getColumnIndex(DBContract.Image.COLUMN_NAME_PATH)));
+        image.setFilename(cursor.getString(cursor.getColumnIndex(DBContract.Image.COLUMN_NAME_PATH)));
         String tags = cursor.getString(cursor.getColumnIndex(DBContract.Image.COLUMN_NAME_TAGS));
         if(tags != null && !tags.equals("")) {
             image.setTags(stringToArrayList(tags));

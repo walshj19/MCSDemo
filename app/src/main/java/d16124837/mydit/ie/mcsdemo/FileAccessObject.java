@@ -18,6 +18,7 @@ import java.util.Date;
 
 // TODO: check for external storage and only use internal if it's not available
 class FileAccessObject {
+	static final String dateFormat = "yyyy-MM-dd-HH-mm-ss-SSS";
 	/**
 	* Create an image file which the camera app can store an image in.
 	* @param context The calling context
@@ -26,17 +27,11 @@ class FileAccessObject {
 	static File createImageFile(Context context){
 		// Create an image file name using the local date format
 		Date now = new Date();
-		String timeStamp = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(now);
-		String imageFileName = "JPEG_" + timeStamp + ".jpg";
+		String timeStamp = new SimpleDateFormat(dateFormat).format(now);
+		String imageFileName = timeStamp + ".jpg";
 		File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 		File imageFile = new File(storageDir, imageFileName);
-		Boolean success;
-		try{
-			success = imageFile.createNewFile();
-		}catch (IOException e){
-			Log.e("MCSDemo","Image file could not be created");
-			return null;
-		}
-		return success?imageFile:null;
+		Log.d("MCSDemo", "file created: "+imageFile.getPath());
+		return imageFile;
 	}
 }

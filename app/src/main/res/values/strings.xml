@@ -5,4 +5,10 @@
     <string name="title_activity_image">ImageActivity</string>
     <string name="analyse_image">Analyse Image</string>
     <string name="image_content_description">The image which is being analysed</string>
+    <string name="delete_image">Delete Image</string>
+    <string name="colors">Colors:</string>
+    <string name="caption">Caption:</string>
+    <string name="description">Description:</string>
+    <string name="tags">Tags:</string>
+    <string name="path_to_file">Path to file:</string>
 </resources>

@@ -31,6 +31,7 @@ public class ImageActivity extends AppCompatActivity {
     private TextView captionView;
     private TextView colorsView;
     private Button analyseButton;
+	private Button deleteButton;
     private ImageData image;
     private Bitmap imageBitmap;
     private VisionServiceClient visionClient;
@@ -41,12 +42,13 @@ public class ImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image);
         //get references to the necessary views
         imageView = (ImageView)findViewById(R.id.image);
-        pathView = (TextView)findViewById(R.id.path);
+        pathView = (TextView)findViewById(R.id.filename);
         tagsView = (TextView)findViewById(R.id.tags);
         descriptionView = (TextView)findViewById(R.id.description);
         captionView = (TextView)findViewById(R.id.caption);
         colorsView = (TextView)findViewById(R.id.colors);
         analyseButton = (Button)findViewById(R.id.button_analyse);
+        deleteButton = (Button)findViewById(R.id.button_delete);
 
         //query the database for the imagedata
         image = DAO.get(this, getIntent().getExtras().getString(ImageData.PATH_KEY));
@@ -63,9 +65,9 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     private void populateViews(){
-        imageBitmap = BitmapFactory.decodeFile(image.getPath());
+        imageBitmap = BitmapFactory.decodeFile(image.getFilename());
         imageView.setImageBitmap(imageBitmap);
-        pathView.setText(image.getPath());
+        pathView.setText(image.getFilename());
         String caption = image.getCaption();
         if(caption != null && !caption.equals("")) {
             tagsView.setText(image.getTags().get(0));
@@ -82,7 +84,19 @@ public class ImageActivity extends AppCompatActivity {
                 new callAPI().execute();
             }
         });
+	    deleteButton.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View v) {
+			    DAO.delete(getApplicationContext(), image);
+			    //return to the calling activity
+			    returnToCallingActivity();
+		    }
+	    });
     }
+
+	private void returnToCallingActivity(){
+		this.finish();
+	}
 
     private class callAPI extends AsyncTask<String,String,String>{
         callAPI(){}

@@ -14,8 +14,15 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+
+/**
+ * Activity for the Image List.
+ * Shows a list of all images in the database.
+ * @author James
+ * @version 1.0
+ * @since 16/11/16
+ */
 
 public class ImageListActivity extends ListActivity {
     final static int CAMERA_REQUEST_CODE = 1;
@@ -35,11 +42,20 @@ public class ImageListActivity extends ListActivity {
         images = DAO.get(this);
 
         //setup the list adapter
-        adapter = new ArrayAdapter<>(this,R.layout.row_image_list,R.id.path,images);
+        adapter = new ArrayAdapter<>(this,R.layout.row_image_list,R.id.filename,images);
         setListAdapter(adapter);
     }
 
-    @Override
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Log.d("MCSDemo","onResume called");
+		images = DAO.get(this);
+		adapter.clear();
+		adapter.addAll(images);
+	}
+
+	@Override
     /**
      * When a list item is clicked it opens up an activity for that item.
      */
@@ -48,7 +64,7 @@ public class ImageListActivity extends ListActivity {
 
         //start image activity
         Intent intent = new Intent(this, ImageActivity.class);
-        intent.putExtra(ImageData.PATH_KEY,images.get(position).getPath());
+        intent.putExtra(ImageData.PATH_KEY,images.get(position).getFilename());
         startActivity(intent);
     }
 
@@ -77,7 +93,7 @@ public class ImageListActivity extends ListActivity {
 					Uri photoURI = FileProvider.getUriForFile(getApplicationContext(),
 							"d16124837.mydit.ie.mcsdemo.fileprovider",
 							lastPhotoFile);
-					Log.d("MCSDemo",photoURI.getPath());
+					//Log.d("MCSDemo",""+photoURI.getPath());
 					takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
 					startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
 				}
@@ -96,17 +112,17 @@ public class ImageListActivity extends ListActivity {
         // switch based on what activity is being returned from
         switch (requestCode){
             case CAMERA_REQUEST_CODE:
-                String imagePath = lastPhotoFile.getPath();
+	            ImageData image = new ImageData(lastPhotoFile.getPath());
 
                 // Add the image to the database
-                DAO.insert(getApplicationContext(), new ImageData(imagePath));
+                DAO.insert(getApplicationContext(), image);
 
                 // Refresh the list of images
-                adapter.add(new ImageData(imagePath));
+                adapter.add(image);
 
                 // Start the image activity for the new image
                 Intent intent = new Intent(this, ImageActivity.class);
-                intent.putExtra(ImageData.PATH_KEY,imagePath);
+                intent.putExtra(ImageData.PATH_KEY,image.getPath(this));
                 startActivity(intent);
                 break;
             default:

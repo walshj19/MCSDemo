@@ -1,5 +1,9 @@
 package d16124837.mydit.ie.mcsdemo;
 
+import android.content.Context;
+import android.os.Environment;
+
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -12,6 +16,7 @@ import java.util.ArrayList;
 class ImageData {
 	final static String PATH_KEY = "IMAGE_PATH";
 
+	private String filename;
 	private String path;
 	private ArrayList<String> tags;
 	private ArrayList<String> description;
@@ -22,21 +27,28 @@ class ImageData {
 
 	ImageData(String path){
 		this.path = path;
+		this.filename = path.substring(path.length()-2);
 	}
 
-	ImageData(String path, ArrayList<String> tags, ArrayList<String> description, String caption, ArrayList<String> colors){
-		setPath(path);
-		setTags(tags);
-		setDescription(description);
-		setCaption(caption);
-		setColors(colors);
+	String getFilename() {
+		return filename;
 	}
 
-	String getPath() {
-		return path;
+	void setFilename(String filename) {
+		this.filename = filename;
 	}
 
-	void setPath(String path) {
+	public String getPath(Context context) {
+		if (path == null){
+			File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+			path = storageDir.getPath()+"/"+getFilename();
+			return path;
+		}else {
+			return path;
+		}
+	}
+
+	public void setPath(String path) {
 		this.path = path;
 	}
 

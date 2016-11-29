@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_image"
     android:orientation="vertical"
@@ -10,38 +10,107 @@
     <ImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="300dp"
+        android:paddingBottom="10dp"
         android:contentDescription="@string/image_content_description" />
 
     <TextView
-        android:id="@+id/path"
+        android:text="@string/path_to_file"
+        android:textStyle="bold"
+        android:id="@+id/filename_desc"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/image"/>
+
+    <TextView
+        android:id="@+id/filename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/filename_desc"
+        android:layout_toEndOf="@+id/filename_desc"/>
+
+    <TextView
+        android:text="@string/tags"
+        android:textStyle="bold"
+        android:id="@+id/tags_desc"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/filename"/>
 
     <TextView
         android:id="@+id/tags"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tags_desc"
+        android:layout_toEndOf="@+id/tags_desc"/>
+
+    <TextView
+        android:text="@string/description"
+        android:textStyle="bold"
+        android:id="@+id/description_desc"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tags_desc"/>
 
     <TextView
         android:id="@+id/description"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/description_desc"
+        android:layout_toEndOf="@+id/description_desc"/>
+
+    <TextView
+        android:text="@string/caption"
+        android:textStyle="bold"
+        android:id="@+id/caption_desc"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/description_desc"/>
 
     <TextView
         android:id="@+id/caption"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/caption_desc"
+        android:layout_toEndOf="@+id/caption_desc"/>
+
+    <TextView
+        android:text="@string/colors"
+        android:textStyle="bold"
+        android:id="@+id/colors_desc"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/caption_desc"/>
 
     <TextView
         android:id="@+id/colors"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/colors_desc"
+        android:layout_toEndOf="@+id/colors_desc"/>
 
     <Button
         android:id="@+id/button_analyse"
         android:text="@string/analyse_image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="50dp"
+        android:layout_above="@+id/button_delete"/>
 
-</LinearLayout>
+    <Button
+        android:id="@+id/button_delete"
+        android:text="@string/delete_image"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
