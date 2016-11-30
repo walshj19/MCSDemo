@@ -42,8 +42,15 @@ class DatabaseAccessObject {
             values.put(DBContract.Image.COLUMN_NAME_CAPTION, "");
             values.put(DBContract.Image.COLUMN_NAME_COLORS, "");
         }
+	    db.beginTransaction();
 
-        db.insert(DBContract.Image.TABLE_NAME, null, values);
+        if(db.insert(DBContract.Image.TABLE_NAME, null, values) == -1){
+	        Log.d("MCSDemo","database insertion failed");
+        }else{
+	        Log.d("MCSDemo","database insertion succeeded");
+        }
+	    db.setTransactionSuccessful();
+	    db.endTransaction();
 	    db.close();
     }
 
@@ -60,15 +67,15 @@ class DatabaseAccessObject {
         //make the query for all rows in the table
         Cursor cursor = db.query(true, DBContract.Image.TABLE_NAME, null, null, null, null, null, null, null);
 
+
         //return an empty array if there are no results
 	    try {
 		    if (cursor.moveToFirst()) {
 			    //otherwise unpack the data into the array
-			    for (int i = 0; i < images.size(); i++) {
+			    do{
 				    //add the imageData to the array
 				    images.add(cursorToImageData(cursor));
-				    cursor.moveToNext();
-			    }
+			    }while (cursor.moveToNext());
 		    }
 	    }finally {
 		    if (cursor != null && !cursor.isClosed()){
