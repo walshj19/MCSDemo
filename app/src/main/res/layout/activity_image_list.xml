@@ -10,13 +10,25 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="d16124837.mydit.ie.mcsdemo.ImageListActivity">
 
+	<TextView
+		android:text="Images"
+		android:id="@+id/title"
+		android:textStyle="bold"
+		android:textSize="30dp"
+		android:gravity="center"
+		android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:layout_alignParentStart="true"/>
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+	    android:layout_below="@+id/title"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_button"
+        android:src="@drawable/add_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

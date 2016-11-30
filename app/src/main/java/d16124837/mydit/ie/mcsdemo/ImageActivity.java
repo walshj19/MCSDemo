@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -32,6 +33,7 @@ public class ImageActivity extends AppCompatActivity {
     private TextView colorsView;
     private Button analyseButton;
 	private Button deleteButton;
+    private ProgressBar progressBar;
     private ImageData image;
     private Bitmap imageBitmap;
     private VisionServiceClient visionClient;
@@ -49,6 +51,7 @@ public class ImageActivity extends AppCompatActivity {
         colorsView = (TextView)findViewById(R.id.colors);
         analyseButton = (Button)findViewById(R.id.button_analyse);
         deleteButton = (Button)findViewById(R.id.button_delete);
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
         //query the database for the imagedata
         image = DatabaseAccessObject.get(this, getIntent().getExtras().getString(ImageData.PATH_KEY));
@@ -81,6 +84,7 @@ public class ImageActivity extends AppCompatActivity {
         analyseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
                 new callAPI().execute();
             }
         });
@@ -155,6 +159,7 @@ public class ImageActivity extends AppCompatActivity {
             DatabaseAccessObject.update(getApplicationContext(), image);
 
             populateViews();
+            progressBar.setVisibility(View.INVISIBLE);
         }
     }
 }

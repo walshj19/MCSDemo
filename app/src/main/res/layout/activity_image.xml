@@ -113,4 +113,16 @@
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"/>
 
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:padding="150dp"
+        android:id="@+id/progressBar"
+        android:progressDrawable="@drawable/circular_progress_bar"
+        android:layout_centerInParent="true"
+	    android:background="@color/colorPrimary"
+	    android:alpha="0.5"/>
+
 </RelativeLayout>
