@@ -50,7 +50,7 @@ public class ImageListActivity extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		Log.d("MCSDemo","onResume called");
-		images = DAO.get(this);
+		images = DatabaseAccessObject.get(this);
 		adapter.clear();
 		adapter.addAll(images);
 	}
@@ -115,7 +115,7 @@ public class ImageListActivity extends ListActivity {
 	            ImageData image = new ImageData(lastPhotoFile.getPath());
 
                 // Add the image to the database
-                DAO.insert(getApplicationContext(), image);
+                DatabaseAccessObject.insert(getApplicationContext(), image);
 
                 // Refresh the list of images
                 adapter.add(image);
