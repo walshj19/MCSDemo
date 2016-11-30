@@ -51,7 +51,7 @@ public class ImageActivity extends AppCompatActivity {
         deleteButton = (Button)findViewById(R.id.button_delete);
 
         //query the database for the imagedata
-        image = DAO.get(this, getIntent().getExtras().getString(ImageData.PATH_KEY));
+        image = DatabaseAccessObject.get(this, getIntent().getExtras().getString(ImageData.PATH_KEY));
 
         //draw all of the views
         populateViews();
@@ -87,7 +87,7 @@ public class ImageActivity extends AppCompatActivity {
 	    deleteButton.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
-			    DAO.delete(getApplicationContext(), image);
+			    DatabaseAccessObject.delete(getApplicationContext(), image);
 			    //return to the calling activity
 			    returnToCallingActivity();
 		    }
@@ -152,7 +152,7 @@ public class ImageActivity extends AppCompatActivity {
             image.setColors(colors);
 
             //update row in database
-            DAO.update(getApplicationContext(), image);
+            DatabaseAccessObject.update(getApplicationContext(), image);
 
             populateViews();
         }
