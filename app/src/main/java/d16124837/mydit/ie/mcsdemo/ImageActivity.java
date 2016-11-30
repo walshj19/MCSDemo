@@ -84,6 +84,7 @@ public class ImageActivity extends AppCompatActivity {
         analyseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBar.bringToFront();
                 progressBar.setVisibility(View.VISIBLE);
                 new callAPI().execute();
             }
