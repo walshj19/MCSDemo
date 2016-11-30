@@ -1,7 +1,10 @@
 package d16124837.mydit.ie.mcsdemo;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.microsoft.projectoxford.vision.VisionServiceClient;
@@ -84,9 +88,21 @@ public class ImageActivity extends AppCompatActivity {
         analyseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBar.bringToFront();
-                progressBar.setVisibility(View.VISIBLE);
-                new callAPI().execute();
+	            //check for internet connection
+	            ConnectivityManager cm =
+			            (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+	            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+	            boolean isConnected = activeNetwork != null &&
+			            activeNetwork.isConnectedOrConnecting();
+
+	            if(isConnected) {
+		            progressBar.bringToFront();
+		            progressBar.setVisibility(View.VISIBLE);
+		            new callAPI().execute();
+	            }else{
+		            Toast.makeText(getApplicationContext(), "No network connection",Toast.LENGTH_LONG).show();
+	            }
             }
         });
 	    deleteButton.setOnClickListener(new View.OnClickListener() {
