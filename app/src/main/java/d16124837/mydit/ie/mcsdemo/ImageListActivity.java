@@ -39,7 +39,7 @@ public class ImageListActivity extends ListActivity {
         setupListeners();
 
         //get the image data from the database
-        images = DAO.get(this);
+        images = DatabaseAccessObject.get(this);
 
         //setup the list adapter
         adapter = new ArrayAdapter<>(this,R.layout.row_image_list,R.id.filename,images);
